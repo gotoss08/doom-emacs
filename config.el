@@ -94,30 +94,14 @@
 (prefer-coding-system 'utf-8)  ;; Prefer UTF-8 for all text
 ;; Set UTF-8 encoding for processes and shell commands
 
-;; Show hidden files
-;; (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$")
 
-;; Customize ls switches
-(setq dired-listing-switches "-alh")
-
-;; Disable dired-omit-mode
-(add-hook 'dired-mode-hook (lambda () (dired-omit-mode -1)))
+;; Show hidden files && disable dired-omit-mode
+(after! dired
+  (setq dired-omit-mode nil))
 
 ;; Use a Unix-like shell (e.g., Git Bash)
 (setq shell-file-name "C:/Program Files/Git/bin/bash.exe")  ;; Path to Git Bash
 (setq explicit-shell-file-name shell-file-name)
-
-;; Ensure Projectile respects .gitignore
-(setq projectile-indexing-method 'native)  ;; Use Git for indexing
-(setq projectile-git-command "git ls-files -zco --exclude-standard")  ;; Use Git to list files
-;;
-
-;; Optional: Use `fd` with .gitignore support
-;; (setq projectile-generic-command "fd . --color=never --type f --hidden --no-ignore-vcs")
-
-;; Refresh Projectile cache
-(add-hook 'projectile-after-switch-project-hook #'projectile-invalidate-cache)
-
 
 ;; Map "<leader> g /" to open C's header/source files
 (map! :map c-mode-map
