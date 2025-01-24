@@ -23,11 +23,6 @@
 ;;
 ;; (setq doom-font (font-spec :family "JetBrains Mono Light" :size 26))
 
-(setq doom-font (font-spec :family "JetBrains Mono Light" :size 26)
-      doom-variable-pitch-font (font-spec :family "Aptos")
-      doom-symbol-font (font-spec :family "JuliaMono")
-      doom-big-font (font-spec :family "JetBrains Mono" :size 34))
-
 ;; (setq doom-font (font-spec :family "Aptos Mono" :size 26 :weight 'light))
 ;; (setq doom-font (font-spec :family "Cascadia Code NF" :size 26 :weight 'light))
 
@@ -48,7 +43,6 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
-
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -82,19 +76,54 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-(add-to-list 'default-frame-alist '(height . 45))
-(add-to-list 'default-frame-alist '(width . 140))
+;; My config
 
-(setq projectile-project-search-path '("c:/code/")
-      org-directory (concat (getenv "onedrive") "/org/")
-      scroll-margin 2
+;; Add cyrillic input support
+(set-input-method 'russian-computer)
+
+(setq scroll-margin 2
       scroll-step 1
       scroll-conservatively 10000
-      ;; scroll-preserve-screen-position 1
       auto-window-vscroll nil
       mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
-(set-input-method 'russian-computer)
+(setq default-process-coding-system '(utf-8 . utf-8))  ;; Ensure UTF-8 for processes
+(setq locale-coding-system 'utf-8)  ;; Ensure UTF-8 for locale
+(setq system-time-locale "C")  ;; Ensure consistent locale for shell commands
+(setq w32-unicode-filenames 'utf-8)  ;; Ensure UTF-8 for filenames
+(prefer-coding-system 'utf-8)  ;; Prefer UTF-8 for all text
+;; Set UTF-8 encoding for processes and shell commands
 
+;; Show hidden files
+;; (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$")
+
+;; Customize ls switches
+(setq dired-listing-switches "-alh")
+
+;; Disable dired-omit-mode
+(add-hook 'dired-mode-hook (lambda () (dired-omit-mode -1)))
+
+;; Use a Unix-like shell (e.g., Git Bash)
+(setq shell-file-name "C:/Program Files/Git/bin/bash.exe")  ;; Path to Git Bash
+(setq explicit-shell-file-name shell-file-name)
+
+;; Ensure Projectile respects .gitignore
+(setq projectile-indexing-method 'native)  ;; Use Git for indexing
+(setq projectile-git-command "git ls-files -zco --exclude-standard")  ;; Use Git to list files
+;;
+
+;; Optional: Use `fd` with .gitignore support
+;; (setq projectile-generic-command "fd . --color=never --type f --hidden --no-ignore-vcs")
+
+;; Refresh Projectile cache
+(add-hook 'projectile-after-switch-project-hook #'projectile-invalidate-cache)
+
+
+;; Map "<leader> g /" to open C's header/source files
 (map! :map c-mode-map
       :n "g /" #'lsp-clangd-find-other-file)
+
+;; Load computer specific configs
+(unless (file-exists-p "~/.doom.d/computer-specific.el")
+  (write-region content nil "~/.doom.d/computer-specific.el"))
+(load "~/.doom.d/computer-specific.el")
